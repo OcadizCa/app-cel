@@ -60,6 +60,7 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.0.1")
     implementation("androidx.compose.material:material:1.4.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
+    implementation(libs.androidx.ui.text.android)
 
     // Test dependencies
     testImplementation("junit:junit:4.13.2")

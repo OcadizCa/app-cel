@@ -24,81 +24,114 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.catho.ui.theme.CathoTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            // Aquí es donde agregas los componentes requeridos
-            MiApp()
+            // Aplicación de encuesta simple
+            CathoTheme {
+                MiEncuestaApp()
+            }
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MiApp() {
-    var text by remember { mutableStateOf("") }
-    var isChecked by remember { mutableStateOf(false) }
-    var sliderValue by remember { mutableStateOf(0f) }
+fun MiEncuestaApp() {
+    // Variables de estado para las respuestas de la encuesta
+    var nombre by remember { mutableStateOf("") }
+    var aceptaTerminos by remember { mutableStateOf(false) }
+    var sliderValue by remember { mutableStateOf(50f) }
+    var resumenVisible by remember { mutableStateOf(false) }  // Mostrar resumen después de enviar
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // TextField para ingresar texto
-        TextField(
-            value = text,
-            onValueChange = { text = it },
-            label = { Text("Ingresa tu nombre") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Checkbox para seleccionar una opción
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text("Aceptar términos")
-            Checkbox(
-                checked = isChecked,
-                onCheckedChange = { isChecked = it }
+        if (!resumenVisible) {
+            // TextField para ingresar nombre
+            TextField(
+                value = nombre,
+                onValueChange = { nombre = it },
+                label = { Text("¿Cuál es tu nombre?") },
+                modifier = Modifier.fillMaxWidth()
             )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Checkbox para aceptar términos
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("¿Aceptas los términos?")
+                Checkbox(
+                    checked = aceptaTerminos,
+                    onCheckedChange = { aceptaTerminos = it }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Slider para calificar algo (ejemplo: satisfacción)
+            Text("¿Cómo calificarías tu experiencia? ${sliderValue.toInt()}")
+            Slider(
+                value = sliderValue,
+                onValueChange = { sliderValue = it },
+                valueRange = 0f..100f,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Botón para enviar respuestas
+            Button(onClick = { resumenVisible = true }) {
+                Text("Enviar")
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Imagen decorativa (asegúrate de tener una imagen en drawable)
+            Image(
+                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                contentDescription = "Imagen decorativa",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.size(100.dp)
+            )
+        } else {
+            // Mostrar el resumen después de enviar
+            text()
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("Nombre: $nombre")
+            Text("Acepta términos: ${if (aceptaTerminos) "Sí" else "No"}")
+            Text("Calificación de la experiencia: ${sliderValue.toInt()}")
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Botón para realizar una acción
-        Button(onClick = { /* Acciones */ }) {
-            Text("Enviar")
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Imagen
-        Image(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground), // Asegúrate de tener una imagen en res/drawable
-            contentDescription = "Imagen de ejemplo",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.size(100.dp)
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Slider para seleccionar un valor numérico
-        Text("Volumen: ${sliderValue.toInt()}")
-        Slider(
-            value = sliderValue,
-            onValueChange = { sliderValue = it },
-            valueRange = 0f..100f
-        )
     }
 }
+
+fun text() {
+
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DefaultPreview() {
+    CathoTheme {
+        MiEncuestaApp()
+    }
+}
+
+
